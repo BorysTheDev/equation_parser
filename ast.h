@@ -17,7 +17,7 @@ struct UnaryFuncWrap
     typedef ast_node type;
   };
 
-  ast_node operator() (ast_node const & node, char op) const
+  ast_node operator() (ast_node const & node, impl::unaryFunc op) const
   {
     return unary_op(node, op);
   }
@@ -37,7 +37,7 @@ struct BinaryFuncWrap
   };
 
   ast_node operator()( ast_node const& left, ast_node const& right,
-      char op) const
+      impl::binaryFunc op) const
   {
     return binary_op(left, right, op);
   }

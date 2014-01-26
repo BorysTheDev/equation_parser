@@ -7,6 +7,7 @@ set (HEADERS
  ./grammar.h
  ./node.h
  ./ast.h
+ ./operators.h
 )
 
 

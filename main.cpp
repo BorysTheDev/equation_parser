@@ -30,7 +30,7 @@ int main()
 
   //for (int i = 0; i < 4000; i++){
   double result =
-      boost::apply_visitor(ast_result_calculator(), ast);
+      boost::apply_visitor(ast_result_calculator(2.1), ast);
   std::cout<< std::endl << result << std::endl;
   //}
 

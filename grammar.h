@@ -7,64 +7,55 @@
 #include <boost/phoenix/phoenix.hpp>
 
 #include "ast.h"
+#include "operators.h"
 
 namespace phx = boost::phoenix;
 namespace qi = boost::spirit::qi;
 
-using qi::_val;
-using qi::_1;
-using qi::_2;
-using qi::_3;
-using qi::_4;
 using qi::double_;
-using qi::grammar;
-using qi::rule;
 using qi::on_error;
 using qi::fail;
-using qi::space_type;
 using phx::val;
 using phx::construct;
 
 template <typename Iterator>
-struct calculator_ast: grammar<Iterator, ast_node(), space_type>
+struct calculator_ast: qi::grammar<Iterator, ast_node(), qi::space_type>
 {
   calculator_ast(): calculator_ast::base_type(expr)
   {
-    expr =
-        term[ _val = _1 ]
-        >> *('+' > term
-        [ _val = binaryFunc(_val, _1, '+') ]
-        |   '-'     > term
-        [ _val = binaryFunc(_val, _1, '-') ]
-        )
+    expr =      term[qi::_val = qi::_1] >>
+       *( '+' > term[qi::_val = binaryFunc(qi::_val, qi::_1, ops::add)]
+        | '-' > term[qi::_val = binaryFunc(qi::_val, qi::_1, ops::sub)]
+        );
+
+    term =      factor[qi::_val = qi::_1] >>
+       *( '*' > factor[qi::_val = binaryFunc(qi::_val, qi::_1, ops::mul)]
+        | '/' > factor[qi::_val = binaryFunc(qi::_val, qi::_1, ops::div)]
+        | '^' > factor[qi::_val = binaryFunc(qi::_val, qi::_1, pow)]
+        );
+
+    factor = double_  [qi::_val = qi::_1]
+        | '(' > expr  [qi::_val = qi::_1] > ')'
+        | '-' > factor[qi::_val = unaryFunc(qi::_1, ops::neg)]
+        | '+' > factor[qi::_val = qi::_1]
+        | qi::no_case["cos"] >> '(' >> expr[qi::_val = unaryFunc(qi::_1, cos)] >> ')'
+        | qi::no_case["sin"] >> '(' >> expr[qi::_val = unaryFunc(qi::_1, sin)] >> ')'
+        | qi::no_case["log"] >> '(' >> expr[qi::_val = unaryFunc(qi::_1, log)] >> ')'
+        | qi::no_case["exp"] >> '(' >> expr[qi::_val = unaryFunc(qi::_1, exp)] >> ')'
+        | qi::no_case["sqrt"] >> '(' >> expr[qi::_val = unaryFunc(qi::_1, sqrt)] >> ')'
+        | qi::no_case["cbrt"] >> '(' >> expr[qi::_val = unaryFunc(qi::_1, cbrt)] >> ')'
+        | qi::char_("a-zA-Z_")[qi::_val = qi::_1]
         ;
 
-        term =
-        factor                  [ _val = _1 ]
-        >> *(   '*'     > factor
-        [ _val = binaryFunc(_val, _1, '*') ]
-        |   '/'     > factor
-        [ _val = binaryFunc(_val, _1, '/') ]
-        )
-        ;
+    expr.name("expr");
+    term.name("term");
+    factor.name("factor");
 
-        factor =
-        double_               [ _val = _1 ]
-        |   '('     > expr      [ _val = _1 ]   > ')'
-        |   '-'     > factor    [ _val = unaryFunc(_1, '-')]
-        |   '+'     > factor    [ _val = _1]
-        ;
-
-        expr.name("expr");
-        term.name("term");
-        factor.name("factor");
-
-        on_error<fail>(expr,
-        std::cout << val("Error! Expecting ") << _4 << " at: \""
-        << construct<std::string>(_3, _2) << "\"\n\n");
+    on_error<fail>(expr, std::cout << val("Error! Expecting ") << qi::_4 << " at: \""
+                   << construct<std::string>(qi::_3, qi::_2) << "\"\n\n");
   }
 
-        rule<Iterator, ast_node(), space_type> expr, term, factor;
-  };
+  qi::rule<Iterator, ast_node(), qi::space_type> expr, term, factor;
+};
 
-    #endif // GRAMMAR_H
+#endif // GRAMMAR_H

@@ -6,26 +6,32 @@
 struct binary_op;
 struct unary_op;
 
-typedef boost::variant<double,
+namespace impl
+{
+  typedef double (*unaryFunc)(double);
+  typedef double (*binaryFunc)(double, double);
+}
+
+typedef boost::variant<double, char,
 boost::recursive_wrapper<binary_op>,
 boost::recursive_wrapper<unary_op>
 > ast_node;
 
 struct binary_op
 {
-  binary_op(ast_node const& left, ast_node const& right, char op)
+  binary_op(ast_node const& left, ast_node const& right, impl::binaryFunc op)
     : left(left), right(right), op(op) {}
 
-  char op;
+  impl::binaryFunc op;
   ast_node left;
   ast_node right;
 };
 
 struct unary_op
 {
-  unary_op(ast_node const& subj, char op): subj(subj), op(op){}
+  unary_op(ast_node const& subj, impl::unaryFunc op): subj(subj), op(op){}
 
-  char op;
+  impl::unaryFunc op;
   ast_node subj;
 };
 

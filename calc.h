@@ -5,52 +5,39 @@
 
 #include <boost/variant.hpp>
 
-struct ast_result_calculator
-    : boost::static_visitor<double>
+struct ast_result_calculator: boost::static_visitor<double>
 {
-
   // evaluate immediate value
-  double operator() (double val) const
+  double operator()(double val) const
   {
     return val;
   }
 
+  // evaluate variable value
+  double operator()(char) const
+  {
+    return t;
+  }
+
   // evaluate binary operation
-  double operator() (binary_op const & node) const
+  double operator()(binary_op const & node) const
   {
     // evaluate the left branch
     double left_val  = boost::apply_visitor(*this, node.left);
     // evaluate the right branch
     double right_val = boost::apply_visitor(*this, node.right);
 
-    switch(node.op)
-    {
-    case '+':
-      return left_val + right_val;
-    case '-':
-      return left_val - right_val;
-    case '*':
-      return left_val * right_val;
-    case '/':
-      return left_val / right_val;
-    default:
-      return 0;
-    }
+    return node.op(left_val, right_val);
   }
 
   // evaluate unary operation
   double operator() (unary_op const & node) const
   {
-    // evaluate the subject
-    double subj_val = boost::apply_visitor(*this, node.subj);
-
-    switch(node.op)
-    {
-    case '-':
-      return -subj_val;
-    default:
-      return 0;
-    }
+    return node.op(boost::apply_visitor(*this, node.subj));
   }
+
+
+  ast_result_calculator(double t) : t(t){}
+  double t;
 };
 #endif // CALC_H
