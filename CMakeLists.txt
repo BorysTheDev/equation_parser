@@ -1,6 +1,7 @@
 project(equation_parser)
 cmake_minimum_required(VERSION 2.8)
-aux_source_directory(. SRC_LIST)
+
+set(SRC_LIST ./main.cpp operators.cpp equation_interpreter.cpp)
 
 set (HEADERS
  ./calc.h
@@ -12,10 +13,9 @@ set (HEADERS
 )
 
 if(CMAKE_COMPILER_IS_GNUCC)
-  add_definitions (-Wall -pedantic -std=gnu++11 -O2)
+  add_definitions (-pedantic -std=gnu++11 -O2)
 endif()
 
-#add_subdirectory(gauss)
 
 include_directories(.)
 

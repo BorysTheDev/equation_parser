@@ -15,5 +15,5 @@ EquationInterpreter::EquationInterpreter(std::string expression)
 
 double EquationInterpreter::solve(const std::map<char, double> &vars)
 {
-  return boost::apply_visitor(ast_result_calculator(2.1), ast);
+  return boost::apply_visitor(ast_result_calculator(vars), ast);
 }

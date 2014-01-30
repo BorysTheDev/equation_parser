@@ -14,9 +14,9 @@ struct ast_result_calculator: boost::static_visitor<double>
   }
 
   // evaluate variable value
-  double operator()(char) const
+  double operator()(char t) const
   {
-    return t;
+    return vars.at(t);
   }
 
   // evaluate binary operation
@@ -37,7 +37,7 @@ struct ast_result_calculator: boost::static_visitor<double>
   }
 
 
-  ast_result_calculator(double t) : t(t){}
-  double t;
+  ast_result_calculator(const std::map<char, double> &v) : vars(v){}
+  const std::map<char, double> &vars;
 };
 #endif // CALC_H
