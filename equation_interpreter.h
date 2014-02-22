@@ -1,7 +1,7 @@
 #ifndef EQUATION_INTERPRETER_H
 #define EQUATION_INTERPRETER_H
-#include "calc.h"
 #include <map>
+#include "node.h"
 
 class EquationInterpreter
 {

@@ -19,7 +19,8 @@ endif()
 
 include_directories(.)
 
-source_group ("Header Files" FILES ${HEADERS})
+source_group("Header Files" FILES ${HEADERS})
 
 add_executable(${PROJECT_NAME} ${HEADERS} ${SRC_LIST})
 
+add_library(equation_interpreter ${SRC_LIST})

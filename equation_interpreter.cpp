@@ -1,4 +1,5 @@
 #include "equation_interpreter.h"
+#include "calc.h"
 #include <string>
 
 EquationInterpreter::EquationInterpreter(std::string expression)

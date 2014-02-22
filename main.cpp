@@ -1,5 +1,4 @@
 #include <iostream>
-#include "calc.h"
 #include "equation_interpreter.h"
 
 using namespace std;
