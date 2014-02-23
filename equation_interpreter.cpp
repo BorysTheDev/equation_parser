@@ -14,7 +14,7 @@ EquationInterpreter::EquationInterpreter(std::string expression)
                            + str_t(begin, end) + "\"");
 }
 
-double EquationInterpreter::solve(const std::map<char, double> &vars)
+double EquationInterpreter::solve(const std::map<char, double> &vars) const
 {
   return boost::apply_visitor(ast_result_calculator(vars), ast);
 }

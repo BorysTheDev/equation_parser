@@ -7,7 +7,7 @@ class EquationInterpreter
 {
 public:
   EquationInterpreter(std::string expression);
-  double solve(const std::map<char,double>& vars);
+  double solve(const std::map<char,double>& vars) const;
 
 private:
   typedef std::string     str_t;
